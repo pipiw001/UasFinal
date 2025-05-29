@@ -99,19 +99,19 @@
                         android:inputType="phone"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Input asal prodi/univ -->
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_prodi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:hint="Prodi"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/input_prodi"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Asal Prodi/Univ"
-                        android:inputType="prodi"/>
+                        android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Button Daftar -->
