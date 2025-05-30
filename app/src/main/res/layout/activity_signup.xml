@@ -15,7 +15,7 @@
         <ImageView
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:src="@drawable/sikegi"
+            android:src="@drawable/logoo"
             android:contentDescription="Logo"
             android:layout_marginBottom="16dp" />
 
