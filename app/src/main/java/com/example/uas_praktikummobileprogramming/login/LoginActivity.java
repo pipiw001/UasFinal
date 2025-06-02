@@ -8,19 +8,26 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.uas_praktikummobileprogramming.MainActivity;
 import com.example.uas_praktikummobileprogramming.R;
 import com.example.uas_praktikummobileprogramming.dashboard.DashboardActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextEmail, editTextPassword;
     private Button buttonLogin, buttonToSignup;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        // handle window insets (status/nav bars)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets sys = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(sys.left, sys.top, sys.right, sys.bottom);
-            return insets;
-        });
+        auth = FirebaseAuth.getInstance();
 
         // bind views
         editTextEmail    = findViewById(R.id.editTextEmail);
@@ -55,14 +57,22 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            // TODO: implement real authentication
-            Toast.makeText(this, "Login berhasil (dummy)", Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-            startActivity(intent);
-            finish(); // supaya tidak bisa balik ke login
+            auth.signInWithEmailAndPassword(email, pass)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Login sukses, bisa lanjut ke MainActivity atau halaman utama
+                                Toast.makeText(LoginActivity.this, "Login berhasil", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                                finish();
+                            } else {
+                                // Login gagal
+                                Toast.makeText(LoginActivity.this, "Login gagal: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
         });
-
 
         // switch to SignUpActivity
         buttonToSignup.setOnClickListener(v -> {
