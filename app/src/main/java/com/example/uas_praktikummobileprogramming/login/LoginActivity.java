@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.uas_praktikummobileprogramming.R;
+import com.example.uas_praktikummobileprogramming.dashboard.DashboardActivity;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -56,7 +57,12 @@ public class LoginActivity extends AppCompatActivity {
 
             // TODO: implement real authentication
             Toast.makeText(this, "Login berhasil (dummy)", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+            startActivity(intent);
+            finish(); // supaya tidak bisa balik ke login
         });
+
 
         // switch to SignUpActivity
         buttonToSignup.setOnClickListener(v -> {
