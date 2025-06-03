@@ -13,10 +13,11 @@
 
         <!-- Banner Lebar di Atas -->
         <ImageView
-            android:id="@+id/detail_banner"
+            android:id="@+id/imgDetail"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
+            android:layout_marginBottom="16dp"
             android:src="@drawable/ic_launcher_background"
             android:contentDescription="Banner Artikel"/>
 
@@ -27,25 +28,34 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Judul Artikel -->
+            <!-- Judul Kegiatan -->
             <TextView
-                android:id="@+id/detail_title"
+                android:id="@+id/txtJudul"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Judul Artikel"
+                android:text="Judul Kegiatan"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"/>
 
-            <!-- Sub Text -->
+            <!-- Tanggal -->
             <TextView
-                android:id="@+id/detail_subtitle"
+                android:id="@+id/txtTanggal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Subjudul artikel"
+                android:text="Tanggal"
                 android:textSize="16sp"
+                android:layout_marginBottom="4dp"
                 android:textColor="@android:color/darker_gray"/>
+
+            <!-- Kuota -->
+            <TextView
+                android:id="@+id/txtKuota"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kuota"
+                android:textSize="16sp" />
 
             <!-- Garis Pembatas -->
             <View
@@ -55,15 +65,24 @@
                 android:layout_marginBottom="16dp"
                 android:background="@android:color/darker_gray"/>
 
-            <!-- Body Text -->
+            <!-- Deskripsi -->
             <TextView
-                android:id="@+id/detail_body"
+                android:id="@+id/txtDeskripsi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Isi konten artikel akan ditampilkan di sini..."
+                android:text="Deskripsi ..."
                 android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:lineSpacingExtra="4dp"/>
+
+            <!-- Lokasi -->
+            <TextView
+                android:id="@+id/txtLokasi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lokasi"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp" />
 
             <!-- Spacer -->
             <View
