@@ -1,11 +1,16 @@
 package com.example.uas_praktikummobileprogramming.notifikasi;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.uas_praktikummobileprogramming.R;
+import com.example.uas_praktikummobileprogramming.dashboard.DashboardActivity;
+import com.example.uas_praktikummobileprogramming.dashboard.KegiatanSayaActivity;
+import com.example.uas_praktikummobileprogramming.profile.ProfileActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
@@ -34,6 +39,31 @@ public class NotifikasiActivity extends AppCompatActivity {
         // Set adapter untuk ListView
         adapter = new NotifikasiAdapter(this, notifikasiList);
         listViewNotifikasi.setAdapter(adapter);
+
+        // Inisialisasi BottomNavigationView dan set listener
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
+        bottomNav.setSelectedItemId(R.id.nav_notifikasi);
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_dashboard) {
+                startActivity(new Intent(this, DashboardActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_kegiatan) {
+                startActivity(new Intent(this, KegiatanSayaActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_notifikasi) {
+                // Sudah di notifikasi
+                return true;
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            }
+            return false;
+        });
     }
 
     private void initializeNotifications() {

@@ -3,14 +3,14 @@ package com.example.uas_praktikummobileprogramming.dashboard;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.uas_praktikummobileprogramming.R;
-import java.util.Arrays;
-import java.util.List;
+import com.example.uas_praktikummobileprogramming.notifikasi.NotifikasiActivity;
+import com.example.uas_praktikummobileprogramming.profile.ProfileActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class KegiatanSayaActivity extends AppCompatActivity {
 
@@ -23,17 +23,38 @@ public class KegiatanSayaActivity extends AppCompatActivity {
 
         card1 = findViewById(R.id.card_1);
 
-        card1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        card1.setOnClickListener(v -> {
+            // Kirim data ke DetailActivity (opsional)
+            Intent intent = new Intent(KegiatanSayaActivity.this, DetailActivity.class);
+            intent.putExtra("judul", "Judul Berita 1");
+            intent.putExtra("subjudul", "Subjudul Berita 1");
+            intent.putExtra("isi", "Ini adalah isi lengkap dari Berita 1.");
+            startActivity(intent);
+        });
 
-                // Kirim data ke DetailActivity (opsional)
-                Intent intent = new Intent(KegiatanSayaActivity.this, DetailActivity.class);
-                intent.putExtra("judul", "Judul Berita 1");
-                intent.putExtra("subjudul", "Subjudul Berita 1");
-                intent.putExtra("isi", "Ini adalah isi lengkap dari Berita 1.");
-                startActivity(intent);
+        // Inisialisasi BottomNavigationView dan set listener
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
+        bottomNav.setSelectedItemId(R.id.nav_kegiatan);
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_dashboard) {
+                startActivity(new Intent(this, DashboardActivity.class));
+                overridePendingTransition(0,0);
+                return true;
+            } else if (id == R.id.nav_kegiatan) {
+                // Sudah di kegiatan, tidak perlu pindah
+                return true;
+            } else if (id == R.id.nav_notifikasi) {
+                startActivity(new Intent(this, NotifikasiActivity.class));
+                overridePendingTransition(0,0);
+                return true;
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                overridePendingTransition(0,0);
+                return true;
             }
+            return false;
         });
     }
 }

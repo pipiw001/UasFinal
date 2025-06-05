@@ -51,6 +51,22 @@
             android:name=".dashboard.DetailActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".dashboard.KegiatanSayaActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name=".profile.ProfileActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name=".profile.EditProfileActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name=".notifikasi.NotifikasiActivity"
+            android:exported="false"/>
+
 
     </application>
 

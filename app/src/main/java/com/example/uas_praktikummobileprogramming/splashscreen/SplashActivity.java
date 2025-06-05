@@ -9,7 +9,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 
-import com.example.uas_praktikummobileprogramming.MainActivity;
 import com.example.uas_praktikummobileprogramming.R;
 import com.example.uas_praktikummobileprogramming.login.LoginActivity;
 
