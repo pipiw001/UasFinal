@@ -13,37 +13,45 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Uas_PraktikumMobileProgramming"
         tools:targetApi="31">
-        <activity
-            android:name=".dashboard.KegiatanSayaActivity"
-            android:exported="false" />
+
         <!-- SplashActivity sebagai entry point -->
         <activity
             android:name=".splashscreen.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- LoginActivity -->
+        </activity>
+
+        <!-- LoginActivity -->
         <activity
             android:name=".login.LoginActivity"
-            android:exported="false" /> <!-- SignupActivity -->
+            android:exported="false" />
+
+        <!-- SignupActivity -->
         <activity
             android:name=".login.SignupActivity"
-            android:exported="false" /> <!-- MainActivity -->
+            android:exported="false" />
+
+        <!-- MainActivity -->
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
         <activity
             android:name=".dashboard.DashboardActivity"
             android:exported="false" />
+
         <activity
             android:name=".dashboard.PendaftaranActivity"
-            android:exported="false" />
+            android:exported="false"/>
+
         <activity
             android:name=".dashboard.DetailActivity"
-            android:exported="false" />
+            android:exported="false"/>
+
+
     </application>
 
 </manifest>
