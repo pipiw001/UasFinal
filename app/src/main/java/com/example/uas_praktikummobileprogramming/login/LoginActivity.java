@@ -10,18 +10,14 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.uas_praktikummobileprogramming.MainActivity;
 import com.example.uas_praktikummobileprogramming.R;
 import com.example.uas_praktikummobileprogramming.dashboard.DashboardActivity;
+import com.example.uas_praktikummobileprogramming.profile.ProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -38,15 +34,15 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         // bind views
-        editTextEmail    = findViewById(R.id.editTextEmail);
+        editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
-        buttonLogin      = findViewById(R.id.buttonLogin);
-        buttonToSignup   = findViewById(R.id.buttonToSignup);
+        buttonLogin = findViewById(R.id.buttonLogin);
+        buttonToSignup = findViewById(R.id.buttonToSignup);
 
         // login button action
         buttonLogin.setOnClickListener(v -> {
             String email = editTextEmail.getText().toString().trim();
-            String pass  = editTextPassword.getText().toString();
+            String pass = editTextPassword.getText().toString();
 
             if (TextUtils.isEmpty(email)) {
                 editTextEmail.setError("Email tidak boleh kosong");
@@ -62,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Login sukses, bisa lanjut ke MainActivity atau halaman utama
+                                // Login sukses, langsung ke ProfileActivity
                                 Toast.makeText(LoginActivity.this, "Login berhasil", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
                                 finish();

@@ -2,21 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_dashboard"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/baseline_home_24"
         android:title="Dashboard"/>
 
     <item
         android:id="@+id/nav_events"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/events"
         android:title="Events"/>
 
     <item
         android:id="@+id/nav_notifications"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/notification"
         android:title="Notifications"/>
 
     <item
         android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/profile"
         android:title="Profile"/>
 </menu>

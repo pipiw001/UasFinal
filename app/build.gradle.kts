@@ -46,4 +46,5 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
+    implementation("com.google.android.material:material:1.6.0")
 }
