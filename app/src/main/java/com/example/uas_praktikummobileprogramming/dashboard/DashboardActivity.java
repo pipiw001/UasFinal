@@ -82,6 +82,7 @@ public class DashboardActivity extends AppCompatActivity {
                     for (DocumentSnapshot doc : lombaSnapshots) {
                         Kegiatan kegiatan = doc.toObject(Kegiatan.class);
                         kegiatan.setId(doc.getId());
+                        kegiatan.setJenis("lomba");
                         kegiatanList.add(kegiatan);
                     }
 
@@ -92,6 +93,7 @@ public class DashboardActivity extends AppCompatActivity {
                                 for (DocumentSnapshot doc : seminarSnapshots) {
                                     Kegiatan kegiatan = doc.toObject(Kegiatan.class);
                                     kegiatan.setId(doc.getId());
+                                    kegiatan.setJenis("seminar");
                                     kegiatanList.add(kegiatan);
                                 }
 

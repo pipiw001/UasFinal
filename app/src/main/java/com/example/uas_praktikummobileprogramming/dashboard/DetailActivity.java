@@ -6,17 +6,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.uas_praktikummobileprogramming.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class DetailActivity extends AppCompatActivity {
 
     ImageView img;
     TextView judul, deskripsi, lokasi, tanggal, kuota;
     private Button daftarButton;
-    private String idSeminar; // untuk menyimpan ID seminar
+    private String idKegiatan;
+    private String jenis; // "seminar" atau "lomba"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +38,9 @@ public class DetailActivity extends AppCompatActivity {
         Intent i = getIntent();
 
         // Ambil data dari intent
-        idSeminar = i.getStringExtra("id_seminar"); // ← tambahkan ini
+        idKegiatan = i.getStringExtra("id_kegiatan");
+        jenis = i.getStringExtra("jenis");
+
         judul.setText(i.getStringExtra("judul"));
         deskripsi.setText(i.getStringExtra("deskripsi"));
         lokasi.setText(i.getStringExtra("lokasi"));
@@ -42,14 +48,32 @@ public class DetailActivity extends AppCompatActivity {
         kuota.setText("Kuota: " + i.getIntExtra("kuota", 0));
         Glide.with(this).load(i.getStringExtra("gambar")).into(img);
 
-        daftarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Kirim id_seminar ke activity pendaftaran
-                Intent daftarIntent = new Intent(DetailActivity.this, PendaftaranActivity.class);
-                daftarIntent.putExtra("id_seminar", idSeminar); // ← kirim ID-nya
-                startActivity(daftarIntent);
-            }
+        daftarButton.setOnClickListener(v -> {
+            Intent daftarIntent = new Intent(DetailActivity.this, PendaftaranActivity.class);
+            daftarIntent.putExtra("id_kegiatan", idKegiatan);
+            daftarIntent.putExtra("jenis", jenis);
+            startActivity(daftarIntent);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Ambil ulang kuota terbaru sesuai jenis kegiatan
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(jenis) // ← dinamis: bisa "seminar" atau "lomba"
+                .document(idKegiatan)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        Long kuotaBaru = doc.getLong("kuota");
+                        if (kuotaBaru != null) {
+                            kuota.setText("Kuota: " + kuotaBaru.intValue());
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Gagal memuat data kuota", Toast.LENGTH_SHORT).show();
+                });
     }
 }

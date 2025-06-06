@@ -7,6 +7,7 @@ public class Kegiatan {
     private String judul, deskripsi, gambar, lokasi;
     private int kuota;
     private Timestamp tanggal;
+    private String jenis; // "seminar" atau "lomba"
 
     public Kegiatan() {} // Diperlukan untuk Firebase
 
@@ -29,5 +30,6 @@ public class Kegiatan {
     public String getLokasi() { return lokasi; }
     public int getKuota() { return kuota; }
     public Timestamp getTanggal() { return tanggal; }
-
+    public String getJenis() { return jenis; }
+    public void setJenis(String jenis) { this.jenis = jenis; }
 }

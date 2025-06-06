@@ -1,5 +1,6 @@
 package com.example.uas_praktikummobileprogramming.dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -20,15 +21,17 @@ public class PendaftaranActivity extends AppCompatActivity {
 
     private EditText inputNama, inputNim, inputEmail, inputTelepon, inputProdi;
     private Button btnDaftar;
-    private String idSeminar; // ID seminar dari intent
+    private String idKegiatan;
+    private String jenis; // "seminar" atau "lomba"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pendaftaran);
 
-        // Ambil ID seminar dari intent
-        idSeminar = getIntent().getStringExtra("id_seminar");
+        // Ambil data dari intent
+        idKegiatan = getIntent().getStringExtra("id_kegiatan");
+        jenis = getIntent().getStringExtra("jenis");
 
         // Inisialisasi komponen input
         inputNama = findViewById(R.id.input_nama);
@@ -58,7 +61,8 @@ public class PendaftaranActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> data = new HashMap<>();
-        data.put("id_seminar", idSeminar);
+        data.put("id_kegiatan", idKegiatan);
+        data.put("jenis", jenis);
         data.put("nama", nama);
         data.put("nim", nim);
         data.put("email", email);
@@ -66,31 +70,37 @@ public class PendaftaranActivity extends AppCompatActivity {
         data.put("prodi", prodi);
         data.put("timestamp", FieldValue.serverTimestamp()); // Optional: waktu daftar
 
-        db.collection("pendaftaran_seminar")
+        // Kirim ke koleksi berdasarkan jenis
+        String namaKoleksi = "pendaftaran_" + jenis;
+
+        db.collection(namaKoleksi)
                 .add(data)
-                .addOnSuccessListener(documentReference -> {
-                    kurangiKuotaSeminar(db);
-                })
+                .addOnSuccessListener(docRef -> kurangiKuotaKegiatan(db))
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Gagal menyimpan pendaftaran", Toast.LENGTH_SHORT).show();
                 });
     }
 
-    private void kurangiKuotaSeminar(FirebaseFirestore db) {
-        DocumentReference seminarRef = db.collection("seminar").document(idSeminar);
+    private void kurangiKuotaKegiatan(FirebaseFirestore db) {
+        // Kurangi kuota dari koleksi 'seminar' atau 'lomba'
+        DocumentReference kegiatanRef = db.collection(jenis).document(idKegiatan);
 
         db.runTransaction(transaction -> {
-            DocumentSnapshot snapshot = transaction.get(seminarRef);
+            DocumentSnapshot snapshot = transaction.get(kegiatanRef);
             Long kuota = snapshot.getLong("kuota");
 
             if (kuota != null && kuota > 0) {
-                transaction.update(seminarRef, "kuota", kuota - 1);
+                transaction.update(kegiatanRef, "kuota", kuota - 1);
             }
 
             return null;
         }).addOnSuccessListener(aVoid -> {
-            Toast.makeText(this, "Pendaftaran berhasil! Kuota dikurangi.", Toast.LENGTH_SHORT).show();
-            finish(); // kembali ke DetailActivity
+            Toast.makeText(this, "Pendaftaran berhasil!", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(PendaftaranActivity.this, KegiatanSayaActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // agar stack bersih
+            startActivity(intent);
+            finish();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Gagal mengurangi kuota", Toast.LENGTH_SHORT).show();
         });
