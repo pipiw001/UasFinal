@@ -3,9 +3,11 @@ package com.example.uas_praktikummobileprogramming.kegiatan;
 import com.google.firebase.Timestamp;
 
 public class Kegiatan {
+    private String id;
     private String judul, deskripsi, gambar, lokasi;
     private int kuota;
     private Timestamp tanggal;
+    private String jenis; // "seminar" atau "lomba"
 
     public Kegiatan() {} // Diperlukan untuk Firebase
 
@@ -18,6 +20,9 @@ public class Kegiatan {
         this.kuota = kuota;
     }
 
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
     // Getter
     public String getJudul() { return judul; }
     public String getDeskripsi() { return deskripsi; }
@@ -25,4 +30,6 @@ public class Kegiatan {
     public String getLokasi() { return lokasi; }
     public int getKuota() { return kuota; }
     public Timestamp getTanggal() { return tanggal; }
+    public String getJenis() { return jenis; }
+    public void setJenis(String jenis) { this.jenis = jenis; }
 }
