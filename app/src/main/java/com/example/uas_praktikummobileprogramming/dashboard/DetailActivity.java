@@ -16,6 +16,7 @@ public class DetailActivity extends AppCompatActivity {
     ImageView img;
     TextView judul, deskripsi, lokasi, tanggal, kuota;
     private Button daftarButton;
+    private String idSeminar; // untuk menyimpan ID seminar
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,9 @@ public class DetailActivity extends AppCompatActivity {
         daftarButton = findViewById(R.id.register_button);
 
         Intent i = getIntent();
+
+        // Ambil data dari intent
+        idSeminar = i.getStringExtra("id_seminar"); // ← tambahkan ini
         judul.setText(i.getStringExtra("judul"));
         deskripsi.setText(i.getStringExtra("deskripsi"));
         lokasi.setText(i.getStringExtra("lokasi"));
@@ -41,7 +45,9 @@ public class DetailActivity extends AppCompatActivity {
         daftarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Kirim id_seminar ke activity pendaftaran
                 Intent daftarIntent = new Intent(DetailActivity.this, PendaftaranActivity.class);
+                daftarIntent.putExtra("id_seminar", idSeminar); // ← kirim ID-nya
                 startActivity(daftarIntent);
             }
         });

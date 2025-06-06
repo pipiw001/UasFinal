@@ -52,6 +52,7 @@ public class KegiatanAdapter extends RecyclerView.Adapter<KegiatanAdapter.ViewHo
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra("id_seminar", kegiatan.getId()); // kirim ID seminar
             intent.putExtra("judul", kegiatan.getJudul());
             intent.putExtra("deskripsi", kegiatan.getDeskripsi());
             intent.putExtra("gambar", kegiatan.getGambar());

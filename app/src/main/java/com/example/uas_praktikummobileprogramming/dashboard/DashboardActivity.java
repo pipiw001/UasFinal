@@ -2,12 +2,16 @@ package com.example.uas_praktikummobileprogramming.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.uas_praktikummobileprogramming.R;
 import com.example.uas_praktikummobileprogramming.kegiatan.Kegiatan;
 import com.example.uas_praktikummobileprogramming.kegiatan.KegiatanAdapter;
@@ -40,7 +44,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         // Inisialisasi Firestore
         db = FirebaseFirestore.getInstance();
-        ambilDataDariFirestore("lomba"); // ambil data koleksi "lomba"
+        ambilDataKegiatanGabungan();
 
         // Inisialisasi BottomNavigationView
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
@@ -69,19 +73,36 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    private void ambilDataDariFirestore(String koleksi) {
-        db.collection(koleksi)
+    private void ambilDataKegiatanGabungan() {
+        kegiatanList.clear();
+
+        db.collection("lomba")
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    kegiatanList.clear();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                .addOnSuccessListener(lombaSnapshots -> {
+                    for (DocumentSnapshot doc : lombaSnapshots) {
                         Kegiatan kegiatan = doc.toObject(Kegiatan.class);
+                        kegiatan.setId(doc.getId());
                         kegiatanList.add(kegiatan);
                     }
-                    adapter.notifyDataSetChanged();
+
+                    // Setelah ambil data lomba, lanjut ambil seminar
+                    db.collection("seminar")
+                            .get()
+                            .addOnSuccessListener(seminarSnapshots -> {
+                                for (DocumentSnapshot doc : seminarSnapshots) {
+                                    Kegiatan kegiatan = doc.toObject(Kegiatan.class);
+                                    kegiatan.setId(doc.getId());
+                                    kegiatanList.add(kegiatan);
+                                }
+
+                                adapter.notifyDataSetChanged(); // Refresh setelah semua data masuk
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(DashboardActivity.this, "Gagal mengambil data seminar", Toast.LENGTH_SHORT).show();
+                            });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(DashboardActivity.this, "Gagal mengambil data", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DashboardActivity.this, "Gagal mengambil data lomba", Toast.LENGTH_SHORT).show();
                 });
     }
 }
