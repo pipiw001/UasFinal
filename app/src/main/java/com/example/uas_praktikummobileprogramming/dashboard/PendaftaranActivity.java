@@ -9,6 +9,8 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.uas_praktikummobileprogramming.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -44,9 +46,11 @@ public class PendaftaranActivity extends AppCompatActivity {
         btnDaftar.setOnClickListener(v -> {
             String nama = inputNama.getText().toString().trim();
             String nim = inputNim.getText().toString().trim();
-            String email = inputEmail.getText().toString().trim();
             String telepon = inputTelepon.getText().toString().trim();
             String prodi = inputProdi.getText().toString().trim();
+
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String email = user != null ? user.getEmail() : "";
 
             if (nama.isEmpty() || nim.isEmpty() || email.isEmpty() || telepon.isEmpty() || prodi.isEmpty()) {
                 Toast.makeText(this, "Semua field wajib diisi", Toast.LENGTH_SHORT).show();

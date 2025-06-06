@@ -5,96 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Isi ScrollView sama seperti XML Anda sebelumnya -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+    <!-- Judul -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="List Kegiatan Saya"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:padding="16dp" />
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="List Kegiatan Saya"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:paddingBottom="16dp" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginBottom="12dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#CCCCCC"
-                android:layout_marginBottom="12dp" />
+    <!-- RecyclerView untuk daftar kegiatan -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewKegiatanSaya"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:clipToPadding="false" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="12dp">
+    </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="160dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_launcher_background" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Judul Berita 1 (Clickable)"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:padding="12dp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- CardView lainnya jika mau... -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="160dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_launcher_background" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Judul Berita 2"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:padding="12dp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-    </ScrollView>
-
-    <!-- BottomNavigationView di bawah -->
+    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
