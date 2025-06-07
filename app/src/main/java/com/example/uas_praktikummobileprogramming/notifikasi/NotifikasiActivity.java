@@ -11,8 +11,15 @@ import com.example.uas_praktikummobileprogramming.dashboard.DashboardActivity;
 import com.example.uas_praktikummobileprogramming.dashboard.KegiatanSayaActivity;
 import com.example.uas_praktikummobileprogramming.profile.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class NotifikasiActivity extends AppCompatActivity {
 
@@ -68,13 +75,43 @@ public class NotifikasiActivity extends AppCompatActivity {
 
     private void initializeNotifications() {
         notifikasiList = new ArrayList<>();
+        adapter = new NotifikasiAdapter(this, notifikasiList);
+        listViewNotifikasi.setAdapter(adapter);
 
-        // Add sample notifications with real-time text and placeholder images
-        notifikasiList.add(new NotificationItem("notif : real time", "Pembaruan sistem telah tersedia", "2 menit yang lalu"));
-        notifikasiList.add(new NotificationItem("notif : real time", "Pesan baru dari admin", "5 menit yang lalu"));
-        notifikasiList.add(new NotificationItem("notif : real time", "Update profil berhasil", "10 menit yang lalu"));
-        notifikasiList.add(new NotificationItem("notif : real time", "Jadwal kuliah telah diperbarui", "15 menit yang lalu"));
-        notifikasiList.add(new NotificationItem("notif : real time", "Reminder: Tugas deadline besok", "1 jam yang lalu"));
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        FirebaseFirestore.getInstance()
+                .collection("notifikasi_user")
+                .document(user.getUid())
+                .collection("inbox")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String judul = doc.getString("judul");
+                        String jenis = doc.getString("jenis");
+                        Timestamp waktu = doc.getTimestamp("timestamp");
+
+                        String waktuStr = waktu != null ? getWaktuRelative(waktu.toDate()) : "Baru saja";
+
+                        notifikasiList.add(new NotificationItem("Notifikasi " + jenis, judul, waktuStr));
+                    }
+                    adapter.notifyDataSetChanged();
+                });
+    }
+
+    private String getWaktuRelative(Date date) {
+        long now = System.currentTimeMillis();
+        long diff = now - date.getTime();
+
+        long minutes = diff / (1000 * 60);
+        if (minutes < 1) return "Baru saja";
+        if (minutes < 60) return minutes + " menit yang lalu";
+        long hours = minutes / 60;
+        if (hours < 24) return hours + " jam yang lalu";
+        long days = hours / 24;
+        return days + " hari yang lalu";
     }
 
     @Override

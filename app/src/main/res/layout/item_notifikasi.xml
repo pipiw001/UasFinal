@@ -11,13 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground">
 
         <!-- Placeholder Image -->
         <ImageView
             android:id="@+id/imageViewNotification"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:src="@drawable/ic_launcher_background"
             android:scaleType="centerCrop"
             android:background="@drawable/notification_image_background"
