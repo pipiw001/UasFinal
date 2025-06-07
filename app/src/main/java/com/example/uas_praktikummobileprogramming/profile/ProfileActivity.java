@@ -10,7 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.uas_praktikummobileprogramming.R;
+import com.example.uas_praktikummobileprogramming.dashboard.DashboardActivity;
+import com.example.uas_praktikummobileprogramming.dashboard.KegiatanSayaActivity;
 import com.example.uas_praktikummobileprogramming.login.LoginActivity;
+import com.example.uas_praktikummobileprogramming.notifikasi.NotifikasiActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,7 +25,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private TextView textViewNama, textViewEmail, nimValue, prodiValue, deskripsiValue;
+    private TextView textViewNama, textViewEmail, textViewNIM, textViewProdi, textViewDeskripsi;
+    private TextView nimValue, prodiValue, deskripsiValue;
     private Button buttonEditProfil, buttonLogout;
     private FirebaseAuth auth;
     private DatabaseReference databaseReference;
@@ -38,21 +43,14 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         auth = FirebaseAuth.getInstance();
-
-        // Cek user sudah login atau belum
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser == null) {
-            // User belum login, arahkan ke LoginActivity
-            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-            finish();
-            return;  // hentikan eksekusi onCreate selanjutnya
-        }
-
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
         // Bind views
         textViewNama = findViewById(R.id.textViewNama);
         textViewEmail = findViewById(R.id.textViewEmail);
+        textViewNIM = findViewById(R.id.textViewNIM);
+        textViewProdi = findViewById(R.id.textViewProdi);
+        textViewDeskripsi = findViewById(R.id.textViewDeskripsi);
         nimValue = findViewById(R.id.nimValue);
         prodiValue = findViewById(R.id.prodiValue);
         deskripsiValue = findViewById(R.id.deskripsiValue);
@@ -73,61 +71,58 @@ public class ProfileActivity extends AppCompatActivity {
         buttonEditProfil.setOnClickListener(v -> {
             startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
         });
+
+        // Bottom Navigation
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
+        bottomNav.setSelectedItemId(R.id.nav_profile);
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_dashboard) {
+                startActivity(new Intent(ProfileActivity.this, DashboardActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_kegiatan) {
+                startActivity(new Intent(ProfileActivity.this, KegiatanSayaActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_notifikasi) {
+                startActivity(new Intent(ProfileActivity.this, NotifikasiActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_profile) {
+                // Saat ini sudah di Profile
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Reload data when returning from EditProfileActivity
         loadUserData();
     }
 
     private void loadUserData() {
         FirebaseUser user = auth.getCurrentUser();
-
         if (user != null) {
             String userId = user.getUid();
-
             databaseReference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        // Ambil data, pakai if-else untuk setiap field
                         String nama = dataSnapshot.child("name").getValue(String.class);
                         String email = dataSnapshot.child("email").getValue(String.class);
                         String nim = dataSnapshot.child("nim").getValue(String.class);
                         String prodi = dataSnapshot.child("prodi").getValue(String.class);
                         String deskripsi = dataSnapshot.child("deskripsi").getValue(String.class);
 
-                        if (nama != null && !nama.isEmpty()) {
-                            textViewNama.setText(nama);
-                        } else {
-                            textViewNama.setText("Nama belum diisi");
-                        }
-
-                        if (email != null && !email.isEmpty()) {
-                            textViewEmail.setText(email);
-                        } else {
-                            textViewEmail.setText("Email belum diisi");
-                        }
-
-                        if (nim != null && !nim.isEmpty()) {
-                            nimValue.setText(nim);
-                        } else {
-                            nimValue.setText("NIM belum diisi");
-                        }
-
-                        if (prodi != null && !prodi.isEmpty()) {
-                            prodiValue.setText(prodi);
-                        } else {
-                            prodiValue.setText("Prodi belum diisi");
-                        }
-
-                        if (deskripsi != null && !deskripsi.isEmpty()) {
-                            deskripsiValue.setText(deskripsi);
-                        } else {
-                            deskripsiValue.setText("Deskripsi belum diisi");
-                        }
+                        textViewNama.setText(nama != null ? nama : "Nama");
+                        textViewEmail.setText(email != null ? email : "Email");
+                        nimValue.setText(nim != null && !nim.isEmpty() ? nim : "...");
+                        prodiValue.setText(prodi != null && !prodi.isEmpty() ? prodi : "...");
+                        deskripsiValue.setText(deskripsi != null && !deskripsi.isEmpty() ? deskripsi : "...");
                     } else {
                         Toast.makeText(ProfileActivity.this, "Data pengguna tidak ditemukan", Toast.LENGTH_SHORT).show();
                     }
@@ -138,11 +133,6 @@ public class ProfileActivity extends AppCompatActivity {
                     Toast.makeText(ProfileActivity.this, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-        } else {
-            // User null, biasanya terjadi logout tiba2
-            Toast.makeText(this, "User tidak ditemukan, silakan login ulang", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-            finish();
         }
     }
 
