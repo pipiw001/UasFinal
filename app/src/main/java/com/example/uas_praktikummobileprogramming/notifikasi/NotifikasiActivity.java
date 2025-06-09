@@ -5,20 +5,32 @@ import android.os.Bundle;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uas_praktikummobileprogramming.R;
 import com.example.uas_praktikummobileprogramming.dashboard.DashboardActivity;
 import com.example.uas_praktikummobileprogramming.dashboard.KegiatanSayaActivity;
 import com.example.uas_praktikummobileprogramming.profile.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class NotifikasiActivity extends AppCompatActivity {
 
-    private ListView listViewNotifikasi;
-    private ArrayList<NotificationItem> notifikasiList;
+    private RecyclerView recyclerView;
     private NotifikasiAdapter adapter;
+    private List<NotifikasiModel> notifikasiList;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +43,13 @@ public class NotifikasiActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Notifikasi");
         }
 
-        listViewNotifikasi = findViewById(R.id.listViewNotifikasi);
+        recyclerView = findViewById(R.id.recyclerViewNotifikasi);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        notifikasiList = new ArrayList<>();
+        adapter = new NotifikasiAdapter(notifikasiList);
+        recyclerView.setAdapter(adapter);
 
-        // Initialize notification list
-        initializeNotifications();
-
-        // Set adapter untuk ListView
-        adapter = new NotifikasiAdapter(this, notifikasiList);
-        listViewNotifikasi.setAdapter(adapter);
+        db = FirebaseFirestore.getInstance();
 
         // Inisialisasi BottomNavigationView dan set listener
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
@@ -64,39 +75,23 @@ public class NotifikasiActivity extends AppCompatActivity {
             }
             return false;
         });
-    }
 
-    private void initializeNotifications() {
-        notifikasiList = new ArrayList<>();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            db.collection("notifikasi_user")
+                    .document(user.getUid())
+                    .collection("inbox")
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .addSnapshotListener((value, error) -> {
+                        if (error != null || value == null) return;
 
-        // Add sample notifications with real-time text and placeholder images
-        notifikasiList.add(new NotificationItem("notif : real time", "Pembaruan sistem telah tersedia", "2 menit yang lalu"));
-        notifikasiList.add(new NotificationItem("notif : real time", "Pesan baru dari admin", "5 menit yang lalu"));
-        notifikasiList.add(new NotificationItem("notif : real time", "Update profil berhasil", "10 menit yang lalu"));
-        notifikasiList.add(new NotificationItem("notif : real time", "Jadwal kuliah telah diperbarui", "15 menit yang lalu"));
-        notifikasiList.add(new NotificationItem("notif : real time", "Reminder: Tugas deadline besok", "1 jam yang lalu"));
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    // Inner class untuk notification item
-    public static class NotificationItem {
-        private String title;
-        private String message;
-        private String time;
-
-        public NotificationItem(String title, String message, String time) {
-            this.title = title;
-            this.message = message;
-            this.time = time;
+                        notifikasiList.clear();
+                        for (DocumentSnapshot doc : value.getDocuments()) {
+                            NotifikasiModel model = doc.toObject(NotifikasiModel.class);
+                            notifikasiList.add(model);
+                        }
+                        adapter.notifyDataSetChanged();
+                    });
         }
-
-        public String getTitle() { return title; }
-        public String getMessage() { return message; }
-        public String getTime() { return time; }
     }
 }

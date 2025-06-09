@@ -8,44 +8,58 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.uas_praktikummobileprogramming.R;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-public class NotifikasiAdapter extends ArrayAdapter<NotifikasiActivity.NotificationItem> {
+public class NotifikasiAdapter extends RecyclerView.Adapter<NotifikasiAdapter.ViewHolder> {
 
-    private Context context;
-    private ArrayList<NotifikasiActivity.NotificationItem> notifications;
+    private List<NotifikasiModel> list;
 
-    public NotifikasiAdapter(Context context, ArrayList<NotifikasiActivity.NotificationItem> notifications) {
-        super(context, 0, notifications);
-        this.context = context;
-        this.notifications = notifications;
+    public NotifikasiAdapter(List<NotifikasiModel> list) {
+        this.list = list;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notifikasi, parent, false);
+        return new ViewHolder(v);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        NotifikasiActivity.NotificationItem notification = getItem(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        NotifikasiModel notif = list.get(position);
+        holder.judul.setText(notif.getJudul());
+        holder.jenis.setText("Jenis: " + notif.getJenis());
 
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_notifikasi, parent, false);
+        if (notif.getTimestamp() != null) {
+            Date date = notif.getTimestamp().toDate();
+            holder.waktu.setText(DateFormat.getDateTimeInstance().format(date));
+        } else {
+            holder.waktu.setText("-");
         }
+    }
 
-        // Bind views
-        ImageView imageViewNotification = convertView.findViewById(R.id.imageViewNotification);
-        TextView textViewTitle = convertView.findViewById(R.id.textViewTitle);
-        TextView textViewMessage = convertView.findViewById(R.id.textViewMessage);
-        TextView textViewTime = convertView.findViewById(R.id.textViewTime);
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
 
-        // Set data
-        if (notification != null) {
-            // Use ic_launcher_background as placeholder
-            imageViewNotification.setImageResource(R.drawable.ic_launcher_background);
-            textViewTitle.setText(notification.getTitle());
-            textViewMessage.setText(notification.getMessage());
-            textViewTime.setText(notification.getTime());
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView judul, jenis, waktu;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            judul = itemView.findViewById(R.id.textJudulNotifikasi);
+            jenis = itemView.findViewById(R.id.textJenisNotifikasi);
+            waktu = itemView.findViewById(R.id.textWaktuNotifikasi);
         }
-
-        return convertView;
     }
 }
