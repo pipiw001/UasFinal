@@ -14,6 +14,7 @@ import com.example.uas_praktikummobileprogramming.dashboard.DashboardActivity;
 import com.example.uas_praktikummobileprogramming.dashboard.KegiatanSayaActivity;
 import com.example.uas_praktikummobileprogramming.login.LoginActivity;
 import com.example.uas_praktikummobileprogramming.notifikasi.NotifikasiActivity;
+import com.example.uas_praktikummobileprogramming.splashscreen.SplashActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -59,7 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Logout action
         buttonLogout.setOnClickListener(v -> {
             auth.signOut();
-            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+            startActivity(new Intent(ProfileActivity.this, SplashActivity.class));
             finish();
         });
 

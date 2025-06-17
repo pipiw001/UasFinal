@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white">
 
-    <!-- Main Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,7 +16,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Judul Profile -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -28,7 +26,6 @@
                 android:textColor="@color/orange"
                 android:paddingBottom="24dp" />
 
-            <!-- Profile Card with Border -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,8 +34,8 @@
                 android:padding="16dp"
                 android:layout_marginBottom="24dp">
 
-                <!-- Profile Icon -->
                 <ImageView
+                    android:id="@+id/imageViewProfileMain"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:src="@drawable/ic_profile_placeholder"
@@ -47,7 +44,6 @@
                     android:layout_marginEnd="16dp"
                     android:layout_gravity="center_vertical" />
 
-                <!-- Name and Email -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -72,12 +68,10 @@
                         android:text="Email"
                         android:textSize="16sp"
                         android:textColor="@android:color/black" />
-
                 </LinearLayout>
-
             </LinearLayout>
 
-            <!-- NIM Section -->
+            <!-- NIM -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,10 +95,9 @@
                     android:text="..."
                     android:textSize="16sp"
                     android:textColor="@android:color/black" />
-
             </LinearLayout>
 
-            <!-- Prodi Section -->
+            <!-- Prodi -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -128,10 +121,9 @@
                     android:text="..."
                     android:textSize="16sp"
                     android:textColor="@android:color/black" />
-
             </LinearLayout>
 
-            <!-- Deskripsi Section -->
+            <!-- Deskripsi -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -155,29 +147,24 @@
                     android:text="..."
                     android:textSize="16sp"
                     android:textColor="@android:color/black" />
-
             </LinearLayout>
 
-            <!-- Spacer untuk mendorong tombol ke bawah -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="100dp" />
-
         </LinearLayout>
-
     </ScrollView>
 
-    <!-- Bottom Buttons - Fixed at bottom -->
+    <!-- Bottom Buttons -->
     <LinearLayout
         android:id="@+id/bottomButtonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/bottomNavigation"
         android:orientation="vertical"
         android:padding="16dp"
         android:background="@android:color/white">
 
-        <!-- Tombol Edit Profil -->
         <Button
             android:id="@+id/buttonEditProfil"
             android:layout_width="match_parent"
@@ -189,7 +176,6 @@
             android:textSize="16sp"
             android:padding="12dp" />
 
-        <!-- Tombol Log Out -->
         <Button
             android:id="@+id/buttonLogout"
             android:layout_width="match_parent"
@@ -199,16 +185,14 @@
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:padding="12dp" />
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/bottom_nav_menu" />
-
-
-
     </LinearLayout>
 
-
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"/>
 </RelativeLayout>

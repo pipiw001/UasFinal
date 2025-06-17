@@ -36,7 +36,7 @@
                 android:text="Judul Kegiatan"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"/>
+                android:textColor="@color/orange"/>
 
             <!-- Tanggal -->
             <TextView

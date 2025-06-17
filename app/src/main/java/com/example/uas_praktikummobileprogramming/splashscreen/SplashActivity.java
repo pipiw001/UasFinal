@@ -27,6 +27,6 @@ public class SplashActivity extends Activity {
             Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
-        }, 2000);
+        }, 4000);
     }
 }

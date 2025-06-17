@@ -8,20 +8,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.uas_praktikummobileprogramming.R;
 import com.example.uas_praktikummobileprogramming.kegiatan.Kegiatan;
 import com.example.uas_praktikummobileprogramming.kegiatan.KegiatanAdapter;
@@ -29,6 +25,7 @@ import com.example.uas_praktikummobileprogramming.notifikasi.NotifikasiActivity;
 import com.example.uas_praktikummobileprogramming.notifikasi.NotifikasiHelper;
 import com.example.uas_praktikummobileprogramming.profile.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
@@ -47,44 +44,43 @@ import java.util.Set;
 public class DashboardActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private KegiatanAdapter adapter;
-    private List<Kegiatan> kegiatanList;
+    private List<Kegiatan> kegiatanList = new ArrayList<>();
+    private List<Kegiatan> semuaKegiatan = new ArrayList<>(); // Untuk pencarian
     private FirebaseFirestore db;
     private ListenerRegistration seminarListener;
     private ListenerRegistration lombaListener;
     private Set<String> idNotifikasiTerkirim = new HashSet<>();
     private NotifikasiHelper notifikasiHelper;
 
+    private TextInputEditText searchBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        // Inisialisasi RecyclerView dan adapter
         recyclerView = findViewById(R.id.recyclerViewKegiatan);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        kegiatanList = new ArrayList<>();
         adapter = new KegiatanAdapter(this, kegiatanList);
         recyclerView.setAdapter(adapter);
 
         notifikasiHelper = new NotifikasiHelper(this);
-
-        // Inisialisasi Firestore
         db = FirebaseFirestore.getInstance();
+
         ambilDataKegiatanGabungan();
         pantauKegiatanBaru("seminar");
         pantauKegiatanBaru("lomba");
 
-        // Inisialisasi BottomNavigationView
+        searchBar = findViewById(R.id.searchBar);
+        setupSearchBar();
+
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
         bottomNav.setSelectedItemId(R.id.nav_dashboard);
 
-        // Pasang listener untuk navigasi
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.nav_dashboard) {
-                // Sudah di dashboard, tidak perlu pindah
-                return true;
-            } else if (id == R.id.nav_kegiatan) {
+            if (id == R.id.nav_dashboard) return true;
+            if (id == R.id.nav_kegiatan) {
                 startActivity(new Intent(this, KegiatanSayaActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
@@ -101,10 +97,10 @@ public class DashboardActivity extends AppCompatActivity {
         });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1001);
             }
         }
 
@@ -120,8 +116,34 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
+    private void setupSearchBar() {
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* Tidak digunakan */ }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterKegiatan(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { /* Tidak digunakan */ }
+        });
+    }
+
+    private void filterKegiatan(String query) {
+        List<Kegiatan> filtered = new ArrayList<>();
+        for (Kegiatan k : semuaKegiatan) {
+            if (k.getJudul().toLowerCase().contains(query.toLowerCase())) {
+                filtered.add(k);
+            }
+        }
+        adapter.setFilteredList(filtered);
+    }
+
     private void ambilDataKegiatanGabungan() {
         kegiatanList.clear();
+        semuaKegiatan.clear();
 
         db.collection("lomba")
                 .get()
@@ -131,9 +153,9 @@ public class DashboardActivity extends AppCompatActivity {
                         kegiatan.setId(doc.getId());
                         kegiatan.setJenis("lomba");
                         kegiatanList.add(kegiatan);
+                        semuaKegiatan.add(kegiatan);
                     }
 
-                    // Setelah ambil data lomba, lanjut ambil seminar
                     db.collection("seminar")
                             .get()
                             .addOnSuccessListener(seminarSnapshots -> {
@@ -142,16 +164,16 @@ public class DashboardActivity extends AppCompatActivity {
                                     kegiatan.setId(doc.getId());
                                     kegiatan.setJenis("seminar");
                                     kegiatanList.add(kegiatan);
+                                    semuaKegiatan.add(kegiatan);
                                 }
-
-                                adapter.notifyDataSetChanged(); // Refresh setelah semua data masuk
+                                adapter.notifyDataSetChanged();
                             })
                             .addOnFailureListener(e -> {
-                                Toast.makeText(DashboardActivity.this, "Gagal mengambil data seminar", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "Gagal mengambil data seminar", Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(DashboardActivity.this, "Gagal mengambil data lomba", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Gagal mengambil data lomba", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -163,7 +185,6 @@ public class DashboardActivity extends AppCompatActivity {
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         if (dc.getType() == DocumentChange.Type.ADDED) {
                             String idDoc = dc.getDocument().getId();
-
                             if (!idNotifikasiTerkirim.contains(idDoc)) {
                                 idNotifikasiTerkirim.add(idDoc);
 
@@ -178,14 +199,11 @@ public class DashboardActivity extends AppCompatActivity {
                     }
                 });
 
-        // Simpan listener supaya bisa dihapus nanti
         if (jenis.equals("seminar")) {
             seminarListener = listener;
         } else if (jenis.equals("lomba")) {
             lombaListener = listener;
         }
-
-
     }
 
     private void simpanNotifikasiInbox(Kegiatan kegiatan) {
@@ -200,10 +218,9 @@ public class DashboardActivity extends AppCompatActivity {
         db.collection("notifikasi_user")
                 .document(user.getUid())
                 .collection("inbox")
-                .document(kegiatan.getId()) // gunakan ID kegiatan agar tidak duplikat
+                .document(kegiatan.getId())
                 .set(data);
     }
-
 
     @Override
     protected void onStop() {

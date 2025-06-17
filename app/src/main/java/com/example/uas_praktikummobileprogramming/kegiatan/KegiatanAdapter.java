@@ -48,7 +48,7 @@ public class KegiatanAdapter extends RecyclerView.Adapter<KegiatanAdapter.ViewHo
         String tanggalFormatted = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(waktu.toDate());
         holder.tanggal.setText(tanggalFormatted);
 
-        Glide.with(context).load(kegiatan.getGambar()).into(holder.gambar); // Pastikan Glide sudah ditambahkan
+        Glide.with(context).load(kegiatan.getGambar()).into(holder.gambar);
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailActivity.class);
@@ -59,7 +59,7 @@ public class KegiatanAdapter extends RecyclerView.Adapter<KegiatanAdapter.ViewHo
             intent.putExtra("gambar", kegiatan.getGambar());
             intent.putExtra("lokasi", kegiatan.getLokasi());
             intent.putExtra("kuota", kegiatan.getKuota());
-            intent.putExtra("tanggal", tanggalFormatted); // Kirim yang sudah diformat
+            intent.putExtra("tanggal", tanggalFormatted);
             context.startActivity(intent);
         });
     }
@@ -67,6 +67,12 @@ public class KegiatanAdapter extends RecyclerView.Adapter<KegiatanAdapter.ViewHo
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    // ✅ Method untuk memperbarui data berdasarkan hasil pencarian
+    public void setFilteredList(List<Kegiatan> filteredList) {
+        this.list = filteredList;
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
